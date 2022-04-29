@@ -24,6 +24,7 @@ async function run() {
   try {
     await client.connect();
     const serviceCollection = client.db("superCar").collection("service");
+    const orderCollection = client.db("superCar").collection("order");
 
     app.get("/service", async (req, res) => {
       const query = {};
@@ -51,6 +52,13 @@ async function run() {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await serviceCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // Order Collection API
+    app.post("/order", async (req, res) => {
+      const order = req.body;
+      const result = await orderCollection.insertOne(order);
       res.send(result);
     });
   } finally {
