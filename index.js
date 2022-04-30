@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
+
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const res = require("express/lib/response");
 const req = require("express/lib/request");
@@ -26,6 +28,16 @@ async function run() {
     const serviceCollection = client.db("superCar").collection("service");
     const orderCollection = client.db("superCar").collection("order");
 
+    // AUTH
+    app.post("/login", async (req, res) => {
+      const user = req.body;
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "1d",
+      });
+      res.send({ accessToken });
+    });
+
+    // Service API
     app.get("/service", async (req, res) => {
       const query = {};
       const cursor = serviceCollection.find(query);
